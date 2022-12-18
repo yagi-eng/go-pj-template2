@@ -1,0 +1,58 @@
+openapi: 3.0.3
+info:
+  title: Sample APIs
+  version: "1.0"
+servers:
+  - url: "https://localhost:8080"
+    description: local
+  - url: "https://example.com"
+    description: develop
+tags:
+  - name: "test"
+    description: "Test"
+paths:
+  /healthz:
+    get:
+      summary: "health check"
+      description: "health check"
+      responses:
+        200:
+          description: success
+  /test:
+    get:
+      tags:
+        - "test"
+      summary: "return some object"
+      description: "return some object"
+      parameters:
+        - $ref: "#/components/parameters/Q"
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestObject"
+components:
+  parameters:
+    Q:
+      name: q
+      in: query
+      required: true
+      schema:
+        type: string
+      description: test query param
+  schemas:
+    TestObject:
+      type: "object"
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        q:
+          type: string
+      example:
+        id: 1
+        name: "Mike"
+        q: "hoge"
