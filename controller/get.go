@@ -8,7 +8,7 @@ import (
 	"github.com/yagi-eng/go-pj-template2/util"
 )
 
-func (c *Controller) GetTest(ctx echo.Context, params apigen.GetTestParams) error {
+func (c *controller) GetTest(ctx echo.Context, params apigen.GetTestParams) error {
 	o := apigen.TestObject{
 		Id:   util.Pointer(10),
 		Name: util.Pointer("Mike"),

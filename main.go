@@ -11,6 +11,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/yagi-eng/go-pj-template2/apigen"
 	"github.com/yagi-eng/go-pj-template2/controller"
+	"github.com/yagi-eng/go-pj-template2/infrastructure"
 	"github.com/yagi-eng/go-pj-template2/util"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -47,10 +48,6 @@ func main() {
 		zapConfig.Level = zap.NewAtomicLevelAt(level)
 		zapConfig.DisableStacktrace = true
 		logger, _ = zapConfig.Build()
-
-		// remove limit for webhook
-		// limit, _ := strconv.Atoi(os.Getenv("RATE_LIMIT"))
-		// e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(limit))))
 	} else {
 		zapConfig := zap.NewDevelopmentConfig()
 		zapConfig.DisableStacktrace = true
@@ -61,7 +58,10 @@ func main() {
 	undo := zap.ReplaceGlobals(logger)
 	defer undo()
 
-	handler := controller.Controller{}
-	apigen.RegisterHandlers(e, &handler)
+	// DB Connect
+	db := infrastructure.Connect()
+
+	handler := controller.NewController(db)
+	apigen.RegisterHandlers(e, handler)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", port)))
 }

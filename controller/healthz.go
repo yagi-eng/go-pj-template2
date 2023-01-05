@@ -7,6 +7,6 @@ import (
 )
 
 // Healthz health check
-func (c *Controller) GetHealthz(ctx echo.Context) error {
+func (c *controller) GetHealthz(ctx echo.Context) error {
 	return ctx.NoContent(http.StatusOK)
 }

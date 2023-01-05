@@ -5,9 +5,21 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
+	"gorm.io/gorm"
 )
 
-type Controller struct{}
+type controller struct {
+	// TODO have usecase struct
+	db *gorm.DB
+}
+
+func NewController(
+	db *gorm.DB,
+) *controller {
+	return &controller{
+		db: db,
+	}
+}
 
 func errWithStack(code int, err error) error {
 	return echo.NewHTTPError(code, errors.WithStack(err))
