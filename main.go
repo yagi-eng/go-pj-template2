@@ -58,8 +58,9 @@ func main() {
 	undo := zap.ReplaceGlobals(logger)
 	defer undo()
 
-	// DB Connect
+	// DB
 	db := infrastructure.Connect()
+	// db.AutoMigrate(&Product{})
 
 	handler := controller.NewController(db)
 	apigen.RegisterHandlers(e, handler)
