@@ -11,7 +11,6 @@ import (
 	"github.com/yagi-eng/go-pj-template2/apigen"
 	"github.com/yagi-eng/go-pj-template2/controller"
 	"github.com/yagi-eng/go-pj-template2/infrastructure"
-	"github.com/yagi-eng/go-pj-template2/util"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -26,8 +25,8 @@ func main() {
 
 	e := echo.New()
 	e.Validator = infrastructure.NewCustomValidator()
+	e.HTTPErrorHandler = infrastructure.CustomHTTPErrorHandler
 	e.Use(middleware.Recover())
-	e.HTTPErrorHandler = util.CustomHTTPErrorHandler
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{os.Getenv("FRONT_DOMAIN")},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
