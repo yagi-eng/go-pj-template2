@@ -27,6 +27,7 @@ func main() {
 	e.Validator = infrastructure.NewCustomValidator()
 	e.HTTPErrorHandler = infrastructure.CustomHTTPErrorHandler
 	e.Use(middleware.Recover())
+	e.Use(infrastructure.CreateOapiRequestValidator())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{os.Getenv("FRONT_DOMAIN")},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
