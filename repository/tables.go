@@ -6,10 +6,10 @@ import (
 
 func Tables() []any {
 	return []any{
-		&User{},
+		&user{},
 	}
 }
 
-type User struct {
+type user struct {
 	gorm.Model
 }
