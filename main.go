@@ -63,7 +63,7 @@ func main() {
 	db := infrastructure.Connect()
 	repository.Migrate(db)
 
-	handler := controller.NewController(db)
-	apigen.RegisterHandlers(e, handler)
+	handlers := controller.NewController(db)
+	apigen.RegisterHandlers(e, handlers)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", port)))
 }
