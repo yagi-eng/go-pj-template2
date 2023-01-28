@@ -12,7 +12,6 @@ import (
 	"github.com/yagi-eng/go-pj-template2/apigen"
 	"github.com/yagi-eng/go-pj-template2/controller"
 	"github.com/yagi-eng/go-pj-template2/infrastructure"
-	"github.com/yagi-eng/go-pj-template2/repository"
 	"github.com/yagi-eng/go-pj-template2/util"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -61,7 +60,7 @@ func main() {
 
 	// DB
 	db := infrastructure.Connect()
-	repository.Migrate(db)
+	infrastructure.Migrate(db)
 
 	handlers := controller.NewController(db)
 	apigen.RegisterHandlers(e, handlers)

@@ -1,16 +1,12 @@
 package repository
 
 import (
-	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
-func Migrate(db *gorm.DB) {
-	err := db.AutoMigrate(
+func Tables() []any {
+	return []any{
 		&User{},
-	)
-	if err != nil {
-		zap.S().Fatalf("Cannot migrate DB: %v", err)
 	}
 }
 
