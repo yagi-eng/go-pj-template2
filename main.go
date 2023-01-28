@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -26,7 +25,7 @@ func main() {
 	}
 
 	e := echo.New()
-	e.Validator = &util.CustomValidator{Validator: validator.New()}
+	e.Validator = infrastructure.NewCustomValidator()
 	e.Use(middleware.Recover())
 	e.HTTPErrorHandler = util.CustomHTTPErrorHandler
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
