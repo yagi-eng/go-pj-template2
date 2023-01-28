@@ -1,0 +1,20 @@
+title: User
+type: "object"
+properties:
+  id:
+    type: integer
+    x-go-type: uint
+  name:
+    type: string
+  bio:
+    type: string
+  icon_url:
+    type: string
+example:
+  id: 1
+  name: "Taro"
+  bio: "My name is Taro. Thank you."
+  icon_url: "https://example.com/images/1234"
+required:
+  - id
+  - name

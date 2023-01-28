@@ -8,8 +8,7 @@ servers:
   - url: "https://example.com"
     description: develop
 tags:
-  - name: "test"
-    description: "Test"
+  - name: "User"
 paths:
   /healthz:
     get:
@@ -18,41 +17,106 @@ paths:
       responses:
         200:
           description: success
-  /test:
+  /users:
+    post:
+      tags:
+        - "User"
+      summary: "create user"
+      description: "create user"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserToSave"
+      responses:
+        201:
+          description: success
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      tags:
+        - "User"
+      summary: "update user"
+      description: "update user"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserToSave"
+      responses:
+        204:
+          description: success
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /users/{userId}:
     get:
       tags:
-        - "test"
-      summary: "return some object"
-      description: "return some object"
+        - "User"
+      summary: "get user"
+      description: "get user"
       parameters:
-        - $ref: "#/components/parameters/Q"
+        - $ref: "#/components/parameters/UserIdPath"
       responses:
         200:
           description: success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TestObject"
+                $ref: "#/components/schemas/User"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
 components:
+  responses:
+    BadRequest:
+      description: bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalServerError:
+      description: internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
   parameters:
-    Q:
-      name: q
-      in: query
+    UserIdPath:
+      name: userId
+      in: path
       required: true
       schema:
-        type: string
-      description: test query param
+        type: integer
+        x-go-type: uint
+      description: user id
+      example: 1
   schemas:
-    TestObject:
-      type: "object"
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        q:
-          type: string
-      example:
-        id: 1
-        name: "Mike"
-        q: "hoge"
+    Error:
+      $ref: "./models/Error.yaml"
+    User:
+      $ref: "./models/User.yaml"
+    UserToSave:
+      $ref: "./models/UserToSave.yaml"

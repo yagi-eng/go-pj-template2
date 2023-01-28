@@ -1,0 +1,19 @@
+title: UserToSave
+type: "object"
+properties:
+  name:
+    type: string
+    x-oapi-codegen-extra-tags:
+      validate: max=12
+  bio:
+    type: string
+  icon_url:
+    type: string
+    x-oapi-codegen-extra-tags:
+      validate: url
+example:
+  name: "Taro"
+  bio: "My name is Taro. Thank you."
+  icon_url: "https://example.com/images/1234"
+required:
+  - name

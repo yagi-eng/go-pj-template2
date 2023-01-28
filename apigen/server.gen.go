@@ -16,9 +16,15 @@ type ServerInterface interface {
 	// health check
 	// (GET /healthz)
 	GetHealthz(ctx echo.Context) error
-	// return some object
-	// (GET /test)
-	GetTest(ctx echo.Context, params GetTestParams) error
+	// create user
+	// (POST /users)
+	PostUsers(ctx echo.Context) error
+	// update user
+	// (PUT /users)
+	PutUsers(ctx echo.Context) error
+	// get user
+	// (GET /users/{userId})
+	GetUsersUserId(ctx echo.Context, userId UserIdPath) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -35,21 +41,37 @@ func (w *ServerInterfaceWrapper) GetHealthz(ctx echo.Context) error {
 	return err
 }
 
-// GetTest converts echo context to params.
-func (w *ServerInterfaceWrapper) GetTest(ctx echo.Context) error {
+// PostUsers converts echo context to params.
+func (w *ServerInterfaceWrapper) PostUsers(ctx echo.Context) error {
 	var err error
 
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GetTestParams
-	// ------------- Required query parameter "q" -------------
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.PostUsers(ctx)
+	return err
+}
 
-	err = runtime.BindQueryParameter("form", true, true, "q", ctx.QueryParams(), &params.Q)
+// PutUsers converts echo context to params.
+func (w *ServerInterfaceWrapper) PutUsers(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.PutUsers(ctx)
+	return err
+}
+
+// GetUsersUserId converts echo context to params.
+func (w *ServerInterfaceWrapper) GetUsersUserId(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "userId" -------------
+	var userId UserIdPath
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "userId", runtime.ParamLocationPath, ctx.Param("userId"), &userId)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter q: %s", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter userId: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.GetTest(ctx, params)
+	err = w.Handler.GetUsersUserId(ctx, userId)
 	return err
 }
 
@@ -82,6 +104,8 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	}
 
 	router.GET(baseURL+"/healthz", wrapper.GetHealthz)
-	router.GET(baseURL+"/test", wrapper.GetTest)
+	router.POST(baseURL+"/users", wrapper.PostUsers)
+	router.PUT(baseURL+"/users", wrapper.PutUsers)
+	router.GET(baseURL+"/users/:userId", wrapper.GetUsersUserId)
 
 }

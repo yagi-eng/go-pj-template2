@@ -1,0 +1,13 @@
+title: Error
+type: "object"
+properties:
+  code:
+    type: string
+  message:
+    type: string
+example:
+  code: "000-000"
+  message: "Unknown Error"
+required:
+  - code
+  - message

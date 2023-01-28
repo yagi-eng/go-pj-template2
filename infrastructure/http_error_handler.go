@@ -4,12 +4,13 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/yagi-eng/go-pj-template2/apigen"
 	"go.uber.org/zap"
 )
 
-// CustomHTTPErrorHandler HTTP errorをハンドリングする
 func CustomHTTPErrorHandler(err error, c echo.Context) {
-	unknownErrResp := errorResp{
+	unknownErrResp := apigen.Error{
+		Code:    "500-000",
 		Message: "Unknown error",
 	}
 
@@ -24,29 +25,47 @@ func CustomHTTPErrorHandler(err error, c echo.Context) {
 	httpCode := he.Code
 	switch err := he.Message.(type) {
 	case error:
+		var errResp apigen.Error
 		switch {
 		case httpCode >= 500:
 			zap.S().Errorf("Server error: %+v", err)
+			errResp = apigen.Error{
+				Code:    "500-000", // FIXME
+				Message: err.Error(),
+			}
 		case httpCode >= 400:
 			zap.S().Infof("Client error: %v", err)
-		}
-		errResp := errorResp{
-			Message: err.Error(),
+			errResp = apigen.Error{
+				Code:    "400-000", // FIXME
+				Message: err.Error(),
+			}
 		}
 		c.JSON(http.StatusInternalServerError, errResp)
 	case string:
 		// echo error
 		if httpCode == http.StatusNotFound {
-			c.String(http.StatusNotFound, "Not Found")
+			errResp := apigen.Error{
+				Code:    "404-000",
+				Message: he.Message.(string),
+			}
+			c.JSON(http.StatusNotFound, errResp)
 			return
 		}
 		if httpCode == http.StatusMethodNotAllowed {
-			c.String(http.StatusMethodNotAllowed, "Method Not Allowed")
+			errResp := apigen.Error{
+				Code:    "405-000",
+				Message: he.Message.(string),
+			}
+			c.JSON(http.StatusMethodNotAllowed, errResp)
 			return
 		}
-		// don't expect reaching here
-		zap.S().Errorf("Echo HTTP error: %v", he)
-		c.JSON(http.StatusInternalServerError, unknownErrResp)
+		// oapi-codegen error
+		zap.S().Infof("oapi-codegen error: %v", he)
+		errResp := apigen.Error{
+			Code:    "400-000",
+			Message: he.Message.(string),
+		}
+		c.JSON(http.StatusBadRequest, errResp)
 	default:
 		// don't expect reaching here
 		zap.S().Errorf("Unknown HTTP error: %v", he)
