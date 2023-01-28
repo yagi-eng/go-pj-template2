@@ -14,7 +14,10 @@ func Connect() *gorm.DB {
 		os.Getenv("DB_NAME") +
 		"?charset=utf8mb4&parseTime=True&loc=Local"
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.New(mysql.Config{
+		DSN:               dsn,
+		DefaultStringSize: 255,
+	}), &gorm.Config{})
 	if err != nil {
 		zap.S().Fatalf("Cannot connect DB: %v", err)
 	}
