@@ -10,7 +10,7 @@ import (
 func (c *controller) PostUsers(ctx echo.Context) error {
 	var req apigen.PostUsersJSONRequestBody
 	if err := bindAndValidate(ctx, &req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return err
 	}
 	return ctx.NoContent(http.StatusCreated)
 }
